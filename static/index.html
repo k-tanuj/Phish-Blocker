@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🛡️ PhishBlocker - Advanced URL Security Scanner</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Animated Background -->
+  <div id="particles"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header fade-in">
+      <div class="header-content">
+        <div class="logo bounce">
+          <i class="fas fa-shield-alt"></i>
+          <h1>SentinelOne</h1>
+        </div>
+        <div class="header-stats">
+          <div class="stat glow">
+            <span class="stat-number">With a Good</span>
+            <span class="stat-label">Accuracy</span>
+          </div>
+          <div class="stat glow">
+            <span class="stat-number" id="scannedCount">0</span>
+            <span class="stat-label">URLs Scanned</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Scanner Section -->
+      <section class="scanner-section fade-in">
+        <div class="scanner-card glass">
+          <div class="card-header">
+            <h2><i class="fas fa-search"></i> Advanced URL Security Scanner</h2>
+            <p>Detect phishing attempts, homograph attacks, subdomain abuse, and more</p>
+          </div>
+
+          <!-- Quick Tests -->
+          <div class="quick-tests">
+            <h3>Quick Tests</h3>
+            <div class="test-buttons">
+              <button class="test-btn safe pulse" onclick="testUrl('https://www.google.com')">
+                <i class="fas fa-check-circle"></i> Safe URL
+              </button>
+              <button class="test-btn warning pulse" onclick="testUrl('https://signin-apple.com')">
+                <i class="fas fa-exclamation-triangle"></i> Suspicious URL
+              </button>
+              <button class="test-btn danger pulse" onclick="testUrl('www.g00gle.com')">
+                <i class="fas fa-times-circle"></i> Phishing URL
+              </button>
+            </div>
+          </div>
+
+          <!-- URL Input -->
+          <div class="input-section">
+            <div class="input-group">
+              <div class="input-wrapper">
+                <i class="fas fa-link input-icon"></i>
+                <input 
+                  type="text" 
+                  id="urlInput" 
+                  placeholder="Enter URL to scan (e.g., https://example.com)" 
+                  autocomplete="off"
+                />
+                <button class="clear-btn" id="clearBtn" onclick="clearInput()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <button class="scan-btn" id="scanBtn" onclick="scanUrl()">
+                <i class="fas fa-search"></i> Scan URL
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading -->
+          <div class="loading-container" id="loadingContainer">
+            <div class="loading-spinner neon"></div>
+            <p>Analyzing URL with AI-powered detection...</p>
+            <div class="loading-steps">
+              <div class="step active"><i class="fas fa-link"></i><span>Parsing</span></div>
+              <div class="step"><i class="fas fa-shield-alt"></i><span>Security</span></div>
+              <div class="step"><i class="fas fa-brain"></i><span>AI Check</span></div>
+            </div>
+          </div>
+
+          <!-- Results -->
+          <div class="results-container" id="resultsContainer"></div>
+        </div>
+      </section>
+
+      <!-- Features Section -->
+      <section class="features-section fade-in">
+        <h2><i class="fas fa-star"></i> Advanced Detection Capabilities</h2>
+        <div class="features-grid">
+          <div class="feature-card float">
+            <div class="feature-icon"><i class="fas fa-globe"></i></div>
+            <h3>IDN/Punycode Detection</h3>
+            <p>Identifies domain name attacks designed to trick users.</p>
+          </div>
+          <div class="feature-card float">
+            <div class="feature-icon"><i class="fas fa-eye"></i></div>
+            <h3>Homograph Analysis</h3>
+            <p>Detects visually similar characters used in spoofing.</p>
+          </div>
+          <div class="feature-card float">
+            <div class="feature-icon"><i class="fas fa-sitemap"></i></div>
+            <h3>Subdomain Abuse</h3>
+            <p>Stops impersonation via malicious subdomains.</p>
+          </div>
+          <div class="feature-card float">
+            <div class="feature-icon"><i class="fas fa-robot"></i></div>
+            <h3>ML Classification</h3>
+            <p>AI trained on 247K+ samples for high accuracy detection.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer fade-in">
+      <div class="footer-bottom">
+        <p>&copy; 2025 SentinelOne. PhishBlocker</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
