@@ -105,7 +105,6 @@ Then visit http://localhost:5000
   </div>
 
   <ol style="color:#d7e9ff; font-size:15px; line-height:1.8em; margin-left:20px;">
-    <li><b>User Input:</b>  The system accepts a URL from the interface or CLI.</li>
 <ol style="color:#d7e9ff; font-size:15px; line-height:1.8em; margin-left:20px;">
   <li style="margin-bottom:12px;">
     <strong>User Input:</strong>
@@ -195,7 +194,6 @@ tldextract==5.1.2
   <h2 style="color:#e6f7ff; font-size:28px; font-weight:800; margin-bottom:15px;">🙏 Acknowledgements</h2>
   <ul style="color:#cde7ff; font-size:15px; line-height:1.9em;">
     <li>Dataset from <b>Mendeley Data</b> — saved as <b>Dataset.csv</b>.</li>
-    <li>Built by <b>Tanuj Kumawat</b> 🧠 with inspiration from real-world phishing detection systems.</li>
     <li>Made possible thanks to open-source Python libraries and the global developer community.</li>
   </ul>
 </div>
