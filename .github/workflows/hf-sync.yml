@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           lfs: true
 
       - name: Push to hub
@@ -25,5 +25,5 @@ jobs:
           git config --global user.name "GitHub Action"
           git remote add space https://k-tanuj:$HF_TOKEN@huggingface.co/spaces/k-tanuj/Phish-Blocker
           
-          # Force push only the current snapshot (HEAD) using LFS
-          git push --force space HEAD:main
+          # Force push using the clean history
+          git push --force space main
