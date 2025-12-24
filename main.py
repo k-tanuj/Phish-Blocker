@@ -6,7 +6,7 @@ import joblib
 import pandas as pd
 from urllib.parse import urlparse
 import unicodedata
-from hdbcli import dbapi
+
 
 app = FastAPI(title="Enhanced Phishing Detection API", version="2.0")
 
@@ -561,37 +561,9 @@ def predict_phishing(request: Request, url: str = Form(...)):
                 "domain_entropy": round(features.get('entropy_of_domain', 0), 2)
             }
         
-        # Log to SAP HANA Cloud database
-        if HANA_AVAILABLE:
-            try:
-                # Get client information
-                client_ip = request.client.host if request.client else "unknown"
-                user_agent = request.headers.get("user-agent", "unknown")
-                
-                # Log the comprehensive analysis result
-                log_success = log_to_hana(
-                    url=url,
-                    result=result,
-                    confidence=probability,
-                    risk_level=risk_level,
-                    risk_factors=risk_details,
-                    url_features=features,
-                    user_agent=user_agent,
-                    ip_address=client_ip
-                )
-                
-                response["logged_to_hana"] = log_success
-                if log_success:
-                    print(f"✅ Logged to SAP HANA: {url} -> {result}")
-                else:
-                    print(f"❌ Failed to log to SAP HANA: {url}")
-                    
-            except Exception as e:
-                print(f"⚠️ SAP HANA logging error: {str(e)}")
-                response["logged_to_hana"] = False
-        else:
-            response["logged_to_hana"] = False
-            response["hana_status"] = "SAP HANA Cloud not available"
+        # SAP HANA usage removed
+        response["logged_to_hana"] = False
+
         
         return response
         
@@ -673,161 +645,7 @@ def test_samples():
 # Add this after your imports at the top of main.py
 from fastapi import FastAPI, Form, Request
 
-# Add SAP HANA database integration
-try:
-    from db import log_to_hana, get_all_logs, get_statistics, create_table_if_not_exists, test_connection
-    HANA_AVAILABLE = True
-    print("📦 SAP HANA Cloud module imported successfully")
-    
-    # Initialize database table on startup
-    try:
-        create_table_if_not_exists()
-        success, message = test_connection()
-        if success:
-            print("✅ SAP HANA Cloud database connection established")
-            print(f"   {message}")
-        else:
-            print(f"❌ SAP HANA Cloud connection failed: {message}")
-            HANA_AVAILABLE = False
-    except Exception as e:
-        print(f"⚠️ SAP HANA Cloud setup error: {str(e)}")
-        HANA_AVAILABLE = False
-        
-except ImportError as e:
-    print(f"⚠️ SAP HANA Cloud not available - install hdbcli: pip install hdbcli")
-    print(f"   Error: {str(e)}")
-    HANA_AVAILABLE = False
-except Exception as e:
-    print(f"⚠️ SAP HANA Cloud module error: {str(e)}")
-    HANA_AVAILABLE = False
+# SAP HANA integration removed for deployment compatibility
+HANA_AVAILABLE = False
 
-# Add these new endpoints for HANA database management
-@app.get("/logs")
-def get_detection_logs(limit: int = 100):
-    """Get phishing detection logs from SAP HANA Cloud database"""
-    if not HANA_AVAILABLE:
-        return {"error": "SAP HANA Cloud database not available"}
-    
-    try:
-        logs = get_all_logs(limit)
-        return {
-            "message": f"Retrieved {len(logs)} detection logs from SAP HANA Cloud",
-            "total_retrieved": len(logs),
-            "logs": logs
-        }
-    except Exception as e:
-        return {"error": f"Failed to retrieve logs from SAP HANA: {str(e)}"}
-
-@app.get("/statistics")
-def get_detection_statistics():
-    """Get detection statistics from SAP HANA Cloud database"""
-    if not HANA_AVAILABLE:
-        return {"error": "SAP HANA Cloud database not available"}
-    
-    try:
-        stats = get_statistics()
-        return {
-            "message": "Phishing detection statistics from SAP HANA Cloud",
-            "database": "SAP HANA Cloud",
-            "statistics": stats
-        }
-    except Exception as e:
-        return {"error": f"Failed to retrieve statistics from SAP HANA: {str(e)}"}
-
-@app.get("/database/status")
-def check_database_status():
-    """Check SAP HANA Cloud database connection status"""
-    if not HANA_AVAILABLE:
-        return {
-            "status": "unavailable",
-            "message": "SAP HANA Cloud database module not available",
-            "connected": False,
-            "database_type": "SAP HANA Cloud"
-        }
-    
-    try:
-        connected, message = test_connection()
-        return {
-            "status": "connected" if connected else "error",
-            "message": message,
-            "connected": connected,
-            "database_type": "SAP HANA Cloud"
-        }
-    except Exception as e:
-        return {
-            "status": "error",
-            "message": str(e),
-            "connected": False,
-            "database_type": "SAP HANA Cloud"
-        }
-
-def fix_logging():
-    """Fix HANA logging by adding missing columns"""
-    try:
-        conn = dbapi.connect(
-            address="754db17e-af16-4009-9baa-1bca994a48de.hana.trial-us10.hanacloud.ondemand.com",
-            port=443,
-            user="DBADMIN",
-            password="Tcs@18420",
-            encrypt=True,
-            sslValidateCertificate=False
-        )
-        
-        cursor = conn.cursor()
-        
-        print("🔍 Checking table structure...")
-        
-        # Check existing columns
-        cursor.execute("""
-            SELECT COLUMN_NAME 
-            FROM TABLE_COLUMNS 
-            WHERE SCHEMA_NAME = 'SENTINELONE' 
-            AND TABLE_NAME = 'PHISHING_LOGS'
-        """)
-        
-        existing_columns = [row[0] for row in cursor.fetchall()]
-        print(f"📋 Existing columns: {existing_columns}")
-        
-        # Required columns that are missing
-        required_columns = {
-            'RISK_LEVEL': 'NVARCHAR(20)',
-            'RISK_FACTORS': 'NCLOB',
-            'URL_LENGTH': 'INTEGER',
-            'DOMAIN_LENGTH': 'INTEGER', 
-            'SPECIAL_CHARS': 'INTEGER',
-            'URL_ENTROPY': 'DECIMAL(5,3)',
-            'DOMAIN_ENTROPY': 'DECIMAL(5,3)',
-            'SUBDOMAINS': 'INTEGER',
-            'USER_AGENT': 'NVARCHAR(500)',
-            'IP_ADDRESS': 'NVARCHAR(45)'
-        }
-        
-        # Add missing columns
-        missing_count = 0
-        for col_name, col_type in required_columns.items():
-            if col_name not in existing_columns:
-                try:
-                    cursor.execute(f"ALTER TABLE SENTINELONE.PHISHING_LOGS ADD ({col_name} {col_type})")
-                    conn.commit()
-                    print(f"✅ Added column: {col_name}")
-                    missing_count += 1
-                except Exception as e:
-                    print(f"❌ Failed to add {col_name}: {e}")
-            else:
-                print(f"✅ Column {col_name} already exists")
-        
-        if missing_count == 0:
-            print("🎉 All required columns already exist!")
-        else:
-            print(f"🎉 Added {missing_count} missing columns!")
-        
-        cursor.close()
-        conn.close()
-        
-        print("\n🎉 HANA logging fix completed!")
-        
-    except Exception as e:
-        print(f"❌ Error: {e}")
-
-if __name__ == "__main__":
-    fix_logging()
+# End of application code
