@@ -8,7 +8,7 @@ jobs:
   sync-to-hub:
     runs-on: ubuntu-latest
     environment:
-      name: Production
+      name: Hugging Face Pro
       url: https://huggingface.co/spaces/k-tanuj/Phish-Blocker
     
     steps:
