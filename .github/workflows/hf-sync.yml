@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           lfs: true
 
       - name: Push to hub
@@ -25,7 +25,5 @@ jobs:
           git config --global user.name "GitHub Action"
           git remote add space https://k-tanuj:$HF_TOKEN@huggingface.co/spaces/k-tanuj/Phish-Blocker
           
-          # Force push to ensure synchronization
-          # Adjust the source folder if you only want to push 'Phish-Blocker' subdir content
-          # But based on our setup, we want to sync the ROOT content to the Space
-          git push --force space main
+          # Force push only the current snapshot (HEAD) using LFS
+          git push --force space HEAD:main
