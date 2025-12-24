@@ -1,0 +1,31 @@
+name: Sync to Hugging Face Hub
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
+      url: https://huggingface.co/spaces/k-tanuj/Phish-Blocker
+    
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Push to hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git remote add space https://k-tanuj:$HF_TOKEN@huggingface.co/spaces/k-tanuj/Phish-Blocker
+          
+          # Force push to ensure synchronization
+          # Adjust the source folder if you only want to push 'Phish-Blocker' subdir content
+          # But based on our setup, we want to sync the ROOT content to the Space
+          git push --force space main
